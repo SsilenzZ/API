@@ -2,12 +2,33 @@ package router
 
 import (
 	"Api/pkg/handler"
+	_ "Api/pkg/router/docs"
 	"Api/pkg/service"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"net/http"
 )
 
+// @title Echo Swagger API
+// @version 1.0
+// @description This is an echo swagger API server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8000
+// @BasePath /
+// @schemes http
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func New(authHandler *handler.AuthHandler) *echo.Echo {
 	e := echo.New()
 
@@ -17,7 +38,7 @@ func New(authHandler *handler.AuthHandler) *echo.Echo {
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 
-	e.GET("/", handler.HelloWorld)
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/comments", handler.ReturnAllComments)
 	e.GET("/comments/:id", handler.ReturnComment)
 	e.GET("/posts", handler.ReturnAllPosts)

@@ -1,8 +1,8 @@
 package comments
 
 type Comments struct {
-	ID     int
 	PostID uint `json:"PostID"`
+	ID     int
 	Name   string
 	Email  string
 	Body   string

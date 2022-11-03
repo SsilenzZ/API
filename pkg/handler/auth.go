@@ -23,6 +23,15 @@ func NewAuthHandler(hasher service.HasherI, jwt service.JwtI) AuthHandler {
 	return AuthHandler{Hasher: hasher, Jwt: jwt}
 }
 
+// @Summary Register
+// @Description Register an account with email and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param user body users.Users true "Data for user to create"
+// @Success 200 "OK"
+// @Failure 400 "Account_with_this_email_is_already_registred"
+// @Router /signup [post]
 func (h AuthHandler) SignUp(c echo.Context) error {
 	var user_ requests.SignUp
 	err := c.Bind(&user_)
@@ -40,6 +49,15 @@ func (h AuthHandler) SignUp(c echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
+// @Summary Sign in
+// @Description Sign in with email and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param user body users.Users true "Data for user to login"
+// @Success 200 "OK"
+// @Failure 400 "Wrong_login_info"
+// @Router /signin [post]
 func (h AuthHandler) SignIn(c echo.Context) error {
 	var user_ requests.SignIn
 	err := c.Bind(&user_)
@@ -58,6 +76,13 @@ func (h AuthHandler) SignIn(c echo.Context) error {
 	})
 }
 
+// @Summary Sign in throгgh google
+// @Description Get google authorization link
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} string
+// @Router /signin/google [get]
 func (h AuthHandler) GoogleSignIn(c echo.Context) error {
 	result := service.GoogleOauthConfig.AuthCodeURL(service.State)
 	return c.JSON(http.StatusOK, result)
