@@ -463,7 +463,7 @@ var doc = `{
         "comments.Comments": {
             "type": "object",
             "properties": {
-                "PostID": {
+                "Post": {
                     "type": "integer"
                 },
                 "ID": {
@@ -486,7 +486,7 @@ var doc = `{
                 "ID": {
                     "type": "integer"
                 },
-                "UserID": {
+                "User": {
                     "type": "integer"
                 },
                 "Body": {

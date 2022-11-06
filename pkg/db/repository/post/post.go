@@ -8,5 +8,5 @@ import (
 var Repository posts.PostRepository
 
 func init() {
-	Repository = posts.ProvidePostRepostiory(connect.DB)
+	Repository = posts.ProvidePostRepository(connect.DB)
 }

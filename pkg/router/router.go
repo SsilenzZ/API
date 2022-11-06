@@ -29,7 +29,8 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func New(authHandler *handler.AuthHandler) *echo.Echo {
+
+func New(authHandler *handler.AuthHandler, commentHandler *handler.CommentHandler, postHandler *handler.PostHandler) *echo.Echo {
 	e := echo.New()
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -39,10 +40,10 @@ func New(authHandler *handler.AuthHandler) *echo.Echo {
 	}))
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-	e.GET("/comments", handler.ReturnAllComments)
-	e.GET("/comments/:id", handler.ReturnComment)
-	e.GET("/posts", handler.ReturnAllPosts)
-	e.GET("/posts/:id", handler.ReturnPost)
+	e.GET("/comments", commentHandler.ReturnAllComments)
+	e.GET("/comments/:id", commentHandler.ReturnComment)
+	e.GET("/posts", postHandler.ReturnAllPosts)
+	e.GET("/posts/:id", postHandler.ReturnPost)
 	e.POST("/sign-up", authHandler.SignUp)
 	e.POST("/sign-in", authHandler.SignIn)
 	e.POST("/sign-in/google", authHandler.GoogleSignIn)
@@ -55,12 +56,12 @@ func New(authHandler *handler.AuthHandler) *echo.Echo {
 	}
 
 	a.Use(middleware.JWTWithConfig(config))
-	a.POST("/comments", handler.CreateComment)
-	a.DELETE("/comments/:id", handler.DeleteComment)
-	a.PUT("/comments/:id", handler.UpdateComment)
-	a.POST("/posts", handler.CreatePost)
-	a.DELETE("/posts/:id", handler.DeletePost)
-	a.PUT("/posts/:id", handler.UpdatePost)
+	a.POST("/comments", commentHandler.CreateComment)
+	a.DELETE("/comments/:id", commentHandler.DeleteComment)
+	a.PUT("/comments/:id", commentHandler.UpdateComment)
+	a.POST("/posts", postHandler.CreatePost)
+	a.DELETE("/posts/:id", postHandler.DeletePost)
+	a.PUT("/posts/:id", postHandler.UpdatePost)
 
 	return e
 }

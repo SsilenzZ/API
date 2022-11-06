@@ -9,7 +9,10 @@ import (
 )
 
 func main() {
-	authHandler := handler.NewAuthHandler(service.BcryptHasher{Cost: 5}, service.Jwt{})
-	e := router.New(&authHandler)
+	authHandler := handler.NewAuthHandler(service.BcryptHasher{Cost: 5}, service.Jwt{}, service.Oauth{})
+	commentHandler := handler.CommentHandler{}
+	postHandler := handler.PostHandler{}
+	e := router.New(&authHandler, &commentHandler, &postHandler)
+
 	e.Logger.Fatal(e.Start(os.Getenv("SERVER_PORT")))
 }

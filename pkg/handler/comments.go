@@ -11,6 +11,13 @@ import (
 	"strconv"
 )
 
+type CommentHandler struct {
+}
+
+func NewCommentHandler() CommentHandler {
+	return CommentHandler{}
+}
+
 // @Summary List comments
 // @Description Get all comments
 // @Tags comments
@@ -19,7 +26,8 @@ import (
 // @Produce xml
 // @Success 200 {array} comments.Comments
 // @Router /comments [get]
-func ReturnAllComments(c echo.Context) error {
+
+func (h CommentHandler) ReturnAllComments(c echo.Context) error {
 	result := comment.Repository.GetAllComments()
 	Accept := c.Request().Header.Get("Accept")
 	if Accept == "" || Accept == "application/json" {
@@ -39,7 +47,8 @@ func ReturnAllComments(c echo.Context) error {
 // @Success 200 {object} comments.Comments
 // @Failure 400 "Record_not_found"
 // @Router /comments/{id} [get]
-func ReturnComment(c echo.Context) error {
+
+func (h CommentHandler) ReturnComment(c echo.Context) error {
 	result, err := comment.Repository.GetComment(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, nil)
@@ -61,11 +70,11 @@ func ReturnComment(c echo.Context) error {
 // @Param comment body comments.Comments true "Data for comment to create"
 // @Success 200 "OK"
 // @Failure 400 "Bad_request"
-// @Router /restricted/comments [post]
-func CreateComment(c echo.Context) error {
+// @Router /api/comments [post]
+
+func (h CommentHandler) CreateComment(c echo.Context) error {
 	user_ := c.Get("user").(*jwt.Token)
 	claims := user_.Claims.(*service.JWTCustomClaims)
-
 	email, err := user.Repository.GetEmail(claims.ID)
 	if err != nil {
 		return err
@@ -91,7 +100,8 @@ func CreateComment(c echo.Context) error {
 // @Success 200 "OK"
 // @Failure 400 "Comment_not_found"
 // @Router /comments/{id} [put]
-func UpdateComment(c echo.Context) error {
+
+func (h CommentHandler) UpdateComment(c echo.Context) error {
 	request := make(map[string]interface{})
 	err := json.NewDecoder(c.Request().Body).Decode(&request)
 	if err != nil {
@@ -119,7 +129,8 @@ func UpdateComment(c echo.Context) error {
 // @Success 200 "OK"
 // @Failure 400 "Comment_not_found"
 // @Router /comments/{id} [put]
-func DeleteComment(c echo.Context) error {
+
+func (h CommentHandler) DeleteComment(c echo.Context) error {
 	comment.Repository.DeleteComment(c.Param("id"))
 
 	return c.JSON(http.StatusOK, nil)

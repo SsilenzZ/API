@@ -2,6 +2,14 @@ package comments
 
 import "gorm.io/gorm"
 
+type CommentRepositoryI interface {
+	GetAllComments() (comment []Comments)
+	GetComment(id string) (comment Comments, err error)
+	CreateComment(reqBody map[string]interface{})
+	UpdateComment(reqBody map[string]interface{}) (err error)
+	DeleteComment(id string)
+}
+
 type CommentRepository struct {
 	DB *gorm.DB
 }
@@ -10,22 +18,22 @@ func ProvideCommentRepository(DB *gorm.DB) CommentRepository {
 	return CommentRepository{DB: DB}
 }
 
-func (c *CommentRepository) GetAllComments() (comment []Comments) {
+func (c CommentRepository) GetAllComments() (comment []Comments) {
 	c.DB.Find(&comment)
 	return
 }
 
-func (c *CommentRepository) GetComment(id string) (comment Comments, err error) {
+func (c CommentRepository) GetComment(id string) (comment Comments, err error) {
 	err = c.DB.First(&comment, id).Error
 	return
 }
 
-func (c *CommentRepository) CreateComment(reqBody map[string]interface{}) {
+func (c CommentRepository) CreateComment(reqBody map[string]interface{}) {
 
 	c.DB.Model(&Comments{}).Create(reqBody)
 }
 
-func (c *CommentRepository) UpdateComment(reqBody map[string]interface{}) (err error) {
+func (c CommentRepository) UpdateComment(reqBody map[string]interface{}) (err error) {
 	var comment Comments
 	comment.ID = reqBody["id"].(int)
 	delete(reqBody, "id")
@@ -33,6 +41,6 @@ func (c *CommentRepository) UpdateComment(reqBody map[string]interface{}) (err e
 	return
 }
 
-func (c *CommentRepository) DeleteComment(id string) {
+func (c CommentRepository) DeleteComment(id string) {
 	c.DB.Delete(&Comments{}, id)
 }

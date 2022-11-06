@@ -6,6 +6,12 @@ import (
 	"os"
 )
 
+type OauthI interface {
+}
+
+type Oauth struct {
+}
+
 var (
 	GoogleOauthConfig = &oauth2.Config{
 		RedirectURL:  "http://localhost:8000/token/google",

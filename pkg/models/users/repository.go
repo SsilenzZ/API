@@ -5,6 +5,13 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepositoryI interface {
+	GetHashedPassword(email, password string) (int, error)
+	CreateUser(email, password string, name string) bool
+	GetEmail(id int) (string, error)
+	GetUser(email, password string) (user Users)
+}
+
 type UserRepository struct {
 	DB *gorm.DB
 }
@@ -13,7 +20,7 @@ func ProvideUserRepository(DB *gorm.DB) UserRepository {
 	return UserRepository{DB: DB}
 }
 
-func (u *UserRepository) GetHashedPassword(email string, password string) (int, error) {
+func (u UserRepository) GetHashedPassword(email, password string) (int, error) {
 	var user Users
 
 	err := u.DB.Where("email = ?", email).First(&user).Error
@@ -27,7 +34,7 @@ func (u *UserRepository) GetHashedPassword(email string, password string) (int, 
 	return user.ID, nil
 }
 
-func (u *UserRepository) CreateUser(email string, password string, name string) bool {
+func (u UserRepository) CreateUser(email, password string, name string) bool {
 	var user Users
 	err := u.DB.Where("email = ?", email).First(&user).Error
 	if err == nil {
@@ -46,7 +53,7 @@ func (u *UserRepository) CreateUser(email string, password string, name string) 
 	return true
 }
 
-func (u *UserRepository) GetEmail(id int) (string, error) {
+func (u UserRepository) GetEmail(id int) (string, error) {
 	var user Users
 
 	err := u.DB.Where("id = ?", id).First(&user).Error
@@ -57,7 +64,7 @@ func (u *UserRepository) GetEmail(id int) (string, error) {
 	return user.Email, nil
 }
 
-func (u *UserRepository) GetUser(email, password string) (user Users) {
+func (u UserRepository) GetUser(email, password string) (user Users) {
 	err := u.DB.Where("email = ?", email).First(&user).Error
 	if err != nil {
 		user.Email = email
